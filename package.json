@@ -1,0 +1,32 @@
+{
+  "name": "leetcode-tracker-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "author": "qyc",
+  "license": "ISC",
+  "dependencies": {
+    "async-lock": "^1.4.0",
+    "bcrypt": "^5.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "fs": "^0.0.1-security",
+    "jsonwebtoken": "^9.0.0",
+    "leetcode-query": "^0.2.7",
+    "mongo-distributed-locks": "^2.0.3",
+    "mongodb": "^5.5.0",
+    "mongoose": "^7.1.1",
+    "sequelize": "^6.31.1",
+    "sqlite3": "^5.1.6",
+    "winston": "^3.9.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
