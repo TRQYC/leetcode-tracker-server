@@ -2,14 +2,14 @@
 
 const mongoose = require('mongoose')
 
-const exerciseLogSchema = new mongoose.Schema({
+const submissionSchema = new mongoose.Schema({
   submissionID:String,
   lang: String, 
   exerciseResult: String, 
 }, {timestamps: true})
 
 
-exerciseLogSchema.set('toJSON', {
+submissionSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
     delete returnedObject._id
@@ -18,17 +18,22 @@ exerciseLogSchema.set('toJSON', {
 })
 
 
-const exerciseSchema = new mongoose.Schema({
-  userID: String,
-  questionID: String,
-  masterLevel: Number, 
+const practiceSchema = new mongoose.Schema({
+  userId: String,
+  questionId: String,
+  review: String, 
+  translatedTitle: String,
+  lastSubmittedAt: Number, 
+  proficiency: Number, 
   rating: Number,
   tags: [String], // tags list 
   note: String, 
-  exerciseLogs:[exerciseLogSchema]
+  status: String, 
+  numSubmitted: Number, 
+  submissionList:[submissionSchema]
 }, { timestamps: true })
 
-exerciseSchema.set('toJSON', {
+practiceSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
     delete returnedObject._id
@@ -36,6 +41,6 @@ exerciseSchema.set('toJSON', {
   }
 })
 
-const ExerciseModel = mongoose.model('Exercise', exerciseSchema)
+const PracticeModel = mongoose.model('Practices', practiceSchema)
 
-module.exports = ExerciseModel
+module.exports = PracticeModel

@@ -5,8 +5,8 @@ const jwt = require('jsonwebtoken')
 const HttpError = require('../models/http_error')
 const error = require('../middleware/error')
 const checkAuth = require('../middleware/check-auth')
-const signup = async (request, response, next) => {
-    const {name, email, password } = request.body
+const signupHandler = async (request, response, next) => {
+    const {email, password } = request.body
     let existingUser;
     try {
         existingUser = await User.findOne({ email: email });
@@ -20,7 +20,7 @@ const signup = async (request, response, next) => {
     }
     if (existingUser) {
         const error = new HttpError(
-            'UserEmail exists already, please login instead.',
+            'Email has existed already, please login.',
             422
         );
         return next(error);
@@ -48,11 +48,10 @@ const signup = async (request, response, next) => {
 }
 
 
-const login =  async (request, response, next) => {
+const loginHandler =  async (request, response, next) => {
     const { email, password } = request.body
     
     const existedUser = await User.findOne({ email })
-    console.log("get user is", existedUser)
     const passwordCorrect = existedUser === null
       ? false
       : await bcrypt.compare(password, existedUser.passwordHash)
@@ -63,6 +62,7 @@ const login =  async (request, response, next) => {
   
     const userForToken = {
       userId: existedUser.id,
+      //todo expire time 
     }
   
     const token = jwt.sign(userForToken, process.env.SECRET)
@@ -71,23 +71,28 @@ const login =  async (request, response, next) => {
       .status(200)
       .send({ userId: existedUser.id, token})
   }
-  
-async function getUserProfile(req, res, next) {
-    const userId = req.userData.userId
-    if (req.params.userId != userId) {
-        throw  new HttpError('Authentication failed', 401)
-    }
+// todo change name
+async function getUserProfileHandler(req, res, next) {
+    console.log("getUserProfileHandler")
     try {
+        const userId = req.userData.userId
+        console.log("userId is", userId)
         let user = await User.findOne({_id: userId})
         res.status(200).json(user)
     }catch(error){
-        throw new HttpError(error, 500)
+        console.log("get user error", error)
+        return next(new HttpError(error, 500))
     }
+    
 }
+
+
+
+
 
 async function updateUserProfile(req, res, next) {
     const userId = req.params.userId 
-    const {site} = req.body
+    const {site, leetSession} = req.body
     if (req.params.userId != req.params.userId) {
         throw  new HttpError('Authentication failed', 401)
     }
@@ -97,15 +102,20 @@ async function updateUserProfile(req, res, next) {
         if (site) {
             user.site = site
         }
+        if (leetSession) {
+            user.leetSession = leetSession
+        } 
         user.save().then((savedUser) => res.status(200).json(savedUser))
     }catch(error){
         throw new HttpError(error, 500)
     }
 }
-
-usersRouter.post('/signup', signup) //todo 增加参数检查
-usersRouter.post('/login', login)
+// usersRouter.use(() => {
+//     console.log("哈哈 ，进入userRouter")
+// })
+usersRouter.post('/signup', signupHandler) //todo 增加参数检查
+usersRouter.post('/login', loginHandler)
 usersRouter.use(checkAuth)
-usersRouter.get('/:userId', getUserProfile)
+usersRouter.get('/', getUserProfileHandler)
 usersRouter.patch('/:userId', updateUserProfile)
 module.exports = usersRouter

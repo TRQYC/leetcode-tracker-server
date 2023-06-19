@@ -2,7 +2,7 @@ const express = require('express')
 require('dotenv').config()
 const cors = require('cors')
 const bodyParser = require('body-parser');
-const exerciseRouter = require('./controllers/exercise_records')
+const practiceRouter = require('./controllers/practice/practice_controllers')
 const usersRouter = require('./controllers/users-controllers')
 const app = express()
 const PORT = process.env.PORT
@@ -12,13 +12,18 @@ const checkAuth = require('./middleware/check-auth');
 const error = require('./middleware/error');
 const logger = require('./middleware/log');
 const HttpError = require('./models/http_error');
+const dailyReviewHandler = require('./controllers/practice/daily_review_controller');
 require('dotenv').config()
 const password = process.env.PASSWORD
 
 const url =
   `mongodb+srv://leetcode:${password}@cluster0.nezrbgk.mongodb.net/?retryWrites=true&w=majority`
-console.log(url, password)
-
+  process.on('uncaughtException', function (err) {
+    //打印出错误
+    console.log(err);
+    //打印出错误的调用栈方便调试
+    console.log(err.stack)
+  });
 app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded())
@@ -29,15 +34,9 @@ app.get('/', (request, response) => {
 app.use(logger)
 
 app.use('/api/users', usersRouter)
-app.use('/api/exercise_records', exerciseRouter)
+app.use('/api/practice', practiceRouter)
+app.use('/api/daily_review', dailyReviewHandler)
 app.use(error)
-
-//after 
-// app.use((req, res, next) => {
-//     console.log('哈哈Could not find this route.', req.method, req.url);
-//     res.status(404).send('')
-// })
-
 
 mongoose.connect(url, {
     connectTimeoutMS: 30000,
