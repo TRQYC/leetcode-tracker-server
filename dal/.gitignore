@@ -1,5 +1,0 @@
-.env
-node_modules
-.DS_Store
-test.rest 
-dal/test_mongo.js
