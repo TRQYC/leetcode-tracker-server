@@ -2,9 +2,9 @@
 
 
 const logger = (req, res, next) => {
-    console.log('new request start', "url", req.url, new Date(), 'params', req.query)
+    console.log('request start', "url", req.url, new Date(), 'params', req.query, "body", req.body)
     next()
-    console.log('new request end', new Date(), "body is", res.body)
+    console.log('request end', new Date(), "status", res.status)
 }
 
 module.exports = logger 

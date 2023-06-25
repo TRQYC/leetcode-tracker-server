@@ -11,10 +11,10 @@ async function syncUserQuestionsEN(userId, session) {
 // 此函数不应当频繁调用。采用pull模式触发
 async function syncUserQuestionsProxy(user, fastMode) {
   console.log("user is", user)
-  const site = user.site 
+  const site = user.syncConfig.site 
   const userId = user.userId 
-  const session = user.leetSession
-  if (!session || session === "") {
+  const session = user.syncConfig.leetSession  
+  if (!site || site === "" || !session || session === "") {
     throw new HttpError("To sync practices, you must fill up session in account settings", 401)
   }
   if (site === "cn") {

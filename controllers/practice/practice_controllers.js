@@ -127,7 +127,7 @@ const getPracticeListHandler = async (request, response, next) => {
     const userId = request.userData.userId;
     let user = await User.find({ userId });
 
-    let practiceList = await Practice.find({ userId });
+    let practiceList = await Practice.find({ userId }).sort({lastSubmittedAt:-1});
     practiceList.forEach((practice) => {
       questionIDList.push(practice.questionId);
     });

@@ -5,7 +5,10 @@ const userSchema = new mongoose.Schema({
   email: String,
   passwordHash: String,
   site: String, // leetcodeSite
-  leetSession: String, 
+  syncConfig: {
+    site: String, 
+    leetSession: String, 
+  }
 })
 
 userSchema.set('toJSON', {
