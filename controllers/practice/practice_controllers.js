@@ -147,10 +147,8 @@ const getPracticeListHandler = async (request, response, next) => {
           .tz("Asia/Shanghai")
           .format("YYYY-MM-DD HH:mm:ss");
       }
-      console.log("new Obj.questioNId", newObj.questionId);
       const question = questionMap.get(newObj.questionId);
       if (question) {
-        console.log("haha");
         newObj.topicTags = question.topicTags;
         newObj.difficulty = question.difficulty;
         newObj.title = question.title;
