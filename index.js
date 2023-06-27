@@ -4,6 +4,7 @@ const cors = require('cors')
 const bodyParser = require('body-parser');
 const practiceRouter = require('./controllers/practice/practice_controllers')
 const usersRouter = require('./controllers/users-controllers')
+const planRouter = require('./controllers/study-plan-controllers')
 const app = express()
 const PORT = process.env.PORT
 
@@ -35,6 +36,7 @@ app.use(logger)
 
 app.use('/api/users', usersRouter)
 app.use('/api/practice', practiceRouter)
+app.use('/api/studyplan', planRouter)
 app.use('/api/daily_review', dailyReviewHandler)
 app.use(error)
 

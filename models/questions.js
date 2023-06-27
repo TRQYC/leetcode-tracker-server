@@ -18,6 +18,7 @@ const questionSchema = new mongoose.Schema({
 questionSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
+    returnedObject.questionId = returnedObject.frontendQuestionId
     delete returnedObject._id
     delete returnedObject.__v
     // the passwordHash should not be revealed

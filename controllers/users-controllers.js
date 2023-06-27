@@ -6,7 +6,7 @@ const HttpError = require('../models/http_error')
 const error = require('../middleware/error')
 const checkAuth = require('../middleware/check-auth')
 const signupHandler = async (request, response, next) => {
-    const {email, password } = request.body
+    const {name, email, password } = request.body
     let existingUser;
     try {
         existingUser = await User.findOne({ email: email });
@@ -30,7 +30,7 @@ const signupHandler = async (request, response, next) => {
     try {
         const passwordHash = await bcrypt.hash(password, saltRounds)
         const savedUser = await User.create({
-            name, 
+            name,
             email,
             passwordHash,
             site: 'us',
@@ -92,7 +92,7 @@ async function getUserProfileHandler(req, res, next) {
 
 async function updateUserProfile(req, res, next) {
     const userId = req.params.userId 
-    const {site, leetSession} = req.body
+    const {site, leetSession, name} = req.body
     if (req.params.userId != req.params.userId) {
         throw  new HttpError('Authentication failed', 401)
     }
@@ -105,6 +105,9 @@ async function updateUserProfile(req, res, next) {
         if (leetSession) {
             user.leetSession = leetSession
         } 
+        if (name) {
+            user.name = name
+        }
         user.save().then((savedUser) => res.status(200).json(savedUser))
     }catch(error){
         throw new HttpError(error, 500)
