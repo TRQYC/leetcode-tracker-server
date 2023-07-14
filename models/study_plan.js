@@ -8,7 +8,7 @@ const studyPatternSchema = new mongoose.Schema({
 
 const studyPlanSchema = new mongoose.Schema({
     name: String, 
-    creator_user_id: String,
+    creatorUserId: String,
     visibility: String, 
     description: String,
     patterns: [studyPatternSchema]

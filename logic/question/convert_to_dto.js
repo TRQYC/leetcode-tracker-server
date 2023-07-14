@@ -20,10 +20,10 @@ async function mGetQuestions(questionIds) {
     questions.forEach((question) => {
       question = question.toJSON(); 
       question.topicTags = convertTags(question.topicTags)
-      console.log("forEach, item", question)
+      //console.log("forEach, item", question)
       questionMap.set(question.frontendQuestionId, question);
     });
-    console.log("from db, questions", questions, questionMap)
+    //console.log("from db, questions", questions, questionMap)
     return [questions, questionMap]
 }
 

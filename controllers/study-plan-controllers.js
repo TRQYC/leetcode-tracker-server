@@ -9,14 +9,22 @@ function str2List(raw) {
 }
 
 const createPlanHandler = async (request, response, next) => {
+    if (!request.userData) {
+        return next(new HttpError(401, "need login", ))
+    }
     const userId = request.userData.userId;
     let plan = request.body
     if (!plan || plan.name === "" || !plan.patterns || plan.patterns.length == 0) {
-        return next(new HttpError(400, "request param illegal"))
+        return next(new HttpError(400, "request illegal"))
     }
-    plan.creatorUserId = userId
-    plan.patterns.forEach(pattern => pattern.questionIds = pattern.questionIds.split(','))
     try {
+        if (plan.id) {
+            const existedPlan = await getStudyPlan(plan.id)
+            if (existedPlan.creatorUserId != userId) {
+                return next(new HttpError(401,  "You do not have the permission to edit"))
+            }
+        }
+        plan.creatorUserId = userId
         const createdPlan = await createStudyPlan(plan)
         response.status(200).json(createdPlan)
     } catch (err) {
@@ -24,6 +32,8 @@ const createPlanHandler = async (request, response, next) => {
         return next(new HttpError(500))
     }
 };
+
+
 
 const getPlanHandler = async (request, response, next) => {
     let userId
@@ -37,10 +47,13 @@ const getPlanHandler = async (request, response, next) => {
     }
     try {
         const existedPlan = await getStudyPlan(planId)
-        if (existedPlan.visibility != "public" && existedPlan.creatorUserId != userId) {
+        console.log("existedPlan is", existedPlan, userId)
+        const isAuthor = existedPlan.creatorUserId === userId
+        if (existedPlan.visibility != "public" && !!isAuthor) {
             return response.status(400).json({ code: 1, message: "You don't have permissions to view this study plan" })
         }
         const planDTO = await appendQuestionInfoToPlan(existedPlan.toJSON())
+        planDTO.isCreator = isAuthor
         return response.status(200).json(planDTO)
     } catch (err) {
         console.log("create plan error", err)
@@ -75,9 +88,8 @@ function buildQuestionUrl(titleSlug, site) {
         return "https://leetcode.cn/problems/" + titleSlug;
     }
 }
-
-router.get("/:planId", getPlanHandler);
 router.use(checkAuth);
+router.get("/:planId", getPlanHandler);
 router.post("/", createPlanHandler);
 router.get("/", getPlanListHandler)
 module.exports = router;
